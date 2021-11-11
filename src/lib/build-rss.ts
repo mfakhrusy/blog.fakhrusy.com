@@ -68,7 +68,7 @@ function createRSS(blogPosts = []) {
     <link href="/atom" rel="self" type="application/rss+xml"/>
     <link href="/" />
     <updated>${NOW}</updated>
-    <id>Brain Dumps</id>${postsString}
+    <id>Fahru's Brain Dumps</id>${postsString}
   </feed>`
 }
 

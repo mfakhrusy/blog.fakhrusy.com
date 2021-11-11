@@ -16,16 +16,16 @@ const Header = ({ titlePre = '' }) => {
   return (
     <header className={styles.header}>
       <Head>
-        <title>{titlePre ? `${titlePre} |` : ''} Brain Dumps</title>
+        <title>{titlePre ? `${titlePre} |` : ''} Fahru's Brain Dumps</title>
         <meta
           name="description"
           content="An example Next.js site using Notion for the blog"
         />
         <meta name="og:title" content="Brain dumps" />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta name="twitter:site" content="@_ijjk" />
+        {/* <meta property="og:image" content={ogImageUrl} /> */}
+        <meta name="twitter:site" content="@f_fakhrusy" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={ogImageUrl} />
+        {/* <meta name="twitter:image" content={ogImageUrl} /> */}
       </Head>
       <ul>
         {navItems.map(({ label, page, link }) => (
