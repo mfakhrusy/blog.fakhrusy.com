@@ -4,14 +4,11 @@ import Header from '../components/header'
 import blogStyles from '../styles/blog.module.css'
 import sharedStyles from '../styles/shared.module.css'
 
-import {
-  getBlogLink,
-  getDateStr,
-  postIsPublished,
-} from '../lib/blog-helpers'
+import { getBlogLink, postIsPublished } from '../lib/blog-helpers'
 import { textBlock } from '../lib/notion/renderers'
 import getNotionUsers from '../lib/notion/getNotionUsers'
 import getBlogIndex from '../lib/notion/getBlogIndex'
+import { PostedDate } from '../components/postedDate'
 
 export async function getStaticProps({ preview }) {
   const postsTable = await getBlogIndex()
@@ -80,12 +77,7 @@ const Index = ({ posts = [], preview }) => {
                   </Link>
                 </span>
               </h3>
-              {post.Authors.length > 0 && (
-                <div className="authors">By: {post.Authors.join(' ')}</div>
-              )}
-              {post.Date && (
-                <div className="posted">Posted: {getDateStr(post.Date)}</div>
-              )}
+              <PostedDate date={post.Date} />
               <p>
                 {(!post.preview || post.preview.length === 0) &&
                   'No preview available'}
