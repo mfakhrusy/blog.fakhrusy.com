@@ -13,6 +13,8 @@ import getBlogIndex from '../lib/notion/getBlogIndex'
 import getNotionUsers from '../lib/notion/getNotionUsers'
 import { getBlogLink } from '../lib/blog-helpers'
 import { PostedDate } from '../components/postedDate'
+import { Bookmark } from '../components/post/bookmark'
+import Post, { ContentFormat } from '../types/post'
 
 // Get the data for each blog post
 export async function getStaticProps({ params: { slug }, preview }) {
@@ -84,7 +86,13 @@ export async function getStaticPaths() {
 
 const listTypes = new Set(['bulleted_list', 'numbered_list'])
 
-const RenderPost = ({ post, redirect, preview }) => {
+type Props = {
+  post: Post
+  redirect: any
+  preview: any
+}
+
+const RenderPost = ({ post, redirect, preview }: Props) => {
   const router = useRouter()
 
   let listTagName: string | null = null
@@ -153,7 +161,6 @@ const RenderPost = ({ post, redirect, preview }) => {
       )}
       <div className={blogStyles.post}>
         <h1>{post.Page || ''}</h1>
-        {/* {postedDate(post.Date)} */}
         <PostedDate date={post.Date} />
 
         <hr />
@@ -225,54 +232,26 @@ const RenderPost = ({ post, redirect, preview }) => {
             )
           }
 
-          const renderBookmark = ({ link, title, description, format }) => {
+          const renderBookmark = ({
+            link,
+            title,
+            description,
+            format,
+          }: {
+            link: string
+            title: any[]
+            description: string
+            format: ContentFormat
+          }) => {
             const { bookmark_icon: icon, bookmark_cover: cover } = format
             toRender.push(
-              <div className={blogStyles.bookmark}>
-                <div>
-                  <div style={{ display: 'flex' }}>
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={blogStyles.bookmarkContentsWrapper}
-                      href={link}
-                    >
-                      <div
-                        role="button"
-                        className={blogStyles.bookmarkContents}
-                      >
-                        <div className={blogStyles.bookmarkInfo}>
-                          <div className={blogStyles.bookmarkTitle}>
-                            {title}
-                          </div>
-                          <div className={blogStyles.bookmarkDescription}>
-                            {description}
-                          </div>
-                          <div className={blogStyles.bookmarkLinkWrapper}>
-                            <img
-                              src={icon}
-                              className={blogStyles.bookmarkLinkIcon}
-                            />
-                            <div className={blogStyles.bookmarkLink}>
-                              {link}
-                            </div>
-                          </div>
-                        </div>
-                        <div className={blogStyles.bookmarkCoverWrapper1}>
-                          <div className={blogStyles.bookmarkCoverWrapper2}>
-                            <div className={blogStyles.bookmarkCoverWrapper3}>
-                              <img
-                                src={cover}
-                                className={blogStyles.bookmarkCover}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <Bookmark
+                link={link}
+                title={title}
+                description={description}
+                icon={icon}
+                cover={cover}
+              />
             )
           }
 
@@ -288,7 +267,7 @@ const RenderPost = ({ post, redirect, preview }) => {
             case 'image':
             case 'video':
             case 'embed': {
-              const { format = {} } = value
+              const { format = {} as ContentFormat } = value
               const {
                 block_width,
                 block_height,
@@ -343,10 +322,10 @@ const RenderPost = ({ post, redirect, preview }) => {
                   <Comp
                     key={!useWrapper ? id : undefined}
                     src={`/api/asset?assetUrl=${encodeURIComponent(
-                      display_source as any
+                      display_source
                     )}&blockId=${id}`}
                     controls={!isImage}
-                    alt={`An ${isImage ? 'image' : 'video'} from Notion`}
+                    alt={`A${isImage ? 'n image' : ' video'} from Notion`}
                     loop={!isImage}
                     muted={!isImage}
                     autoPlay={!isImage}
@@ -384,7 +363,7 @@ const RenderPost = ({ post, redirect, preview }) => {
               break
             case 'bookmark':
               const { link, title, description } = properties
-              const { format = {} } = value
+              const { format = {} as ContentFormat } = value
               renderBookmark({ link, title, description, format })
               break
             case 'code': {
