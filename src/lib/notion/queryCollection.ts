@@ -1,4 +1,4 @@
-import rpc from './rpc'
+import rpc from './rpc';
 
 export default function queryCollection({
   collectionId,
@@ -26,11 +26,11 @@ export default function queryCollection({
       searchQuery: '',
       userTimeZone: 'America/Phoenix',
     },
-  }
+  };
 
   return rpc('queryCollection', {
     collectionId,
     collectionViewId,
     ...queryCollectionBody,
-  })
+  });
 }

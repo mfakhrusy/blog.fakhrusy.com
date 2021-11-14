@@ -1,5 +1,5 @@
-import 'styles/global.css'
-import 'katex/dist/katex.css'
+import 'styles/global.css';
+import 'katex/dist/katex.css';
 
 export default function MyApp({ Component, pageProps }) {
   return (
@@ -7,5 +7,5 @@ export default function MyApp({ Component, pageProps }) {
       <Component {...pageProps} />
       {/* <Footer /> */}
     </>
-  )
+  );
 }

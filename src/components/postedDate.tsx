@@ -1,8 +1,8 @@
-import { getDateStr } from 'lib/blog-helpers'
+import { getDateStr } from 'lib/blog-helpers';
 
 type Props = {
-  date: Date | undefined
-}
+  date: Date | undefined;
+};
 
 export function PostedDate({ date }: Props) {
   if (date) {
@@ -10,8 +10,8 @@ export function PostedDate({ date }: Props) {
       <div className="posted">
         <small>{getDateStr(date)}</small>
       </div>
-    )
+    );
   } else {
-    return null
+    return null;
   }
 }

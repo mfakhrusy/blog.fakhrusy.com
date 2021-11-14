@@ -1,17 +1,17 @@
-import Link from 'next/link'
-import Head from 'next/head'
-import ExtLink from 'components/ext-link'
-import { useRouter } from 'next/router'
-import styles from 'styles/header.module.css'
+import Link from 'next/link';
+import Head from 'next/head';
+import ExtLink from 'components/ext-link';
+import { useRouter } from 'next/router';
+import styles from 'styles/header.module.css';
 
 const navItems: { label: string; page?: string; link?: string }[] = [
   { label: 'Home', page: '/' },
-]
+];
 
-const ogImageUrl = 'https://notion-blog.now.sh/og-image.png'
+const ogImageUrl = 'https://notion-blog.now.sh/og-image.png';
 
 const Header = ({ titlePre = '' }) => {
-  const { pathname } = useRouter()
+  const { pathname } = useRouter();
 
   return (
     <header className={styles.header}>
@@ -43,7 +43,7 @@ const Header = ({ titlePre = '' }) => {
         ))}
       </ul>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

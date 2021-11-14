@@ -1,66 +1,66 @@
-import Link from 'next/link'
-import fetch from 'node-fetch'
-import { useRouter } from 'next/router'
-import Header from 'components/header'
-import Heading from 'components/heading'
-import components from 'components/dynamic'
-import ReactJSXParser from '@zeit/react-jsx-parser'
-import blogStyles from 'styles/blog.module.css'
-import { textBlock } from 'lib/notion/renderers'
-import getPageData from 'lib/notion/getPageData'
-import React, { CSSProperties, useEffect } from 'react'
-import getBlogIndex from 'lib/notion/getBlogIndex'
-import getNotionUsers from 'lib/notion/getNotionUsers'
-import { getBlogLink } from 'lib/blog-helpers'
-import { PostedDate } from 'components/postedDate'
-import { Bookmark } from 'components/post/bookmark'
-import Post, { ContentFormat } from 'types/post'
+import Link from 'next/link';
+import fetch from 'node-fetch';
+import { useRouter } from 'next/router';
+import Header from 'components/header';
+import Heading from 'components/heading';
+import components from 'components/dynamic';
+import ReactJSXParser from '@zeit/react-jsx-parser';
+import blogStyles from 'styles/blog.module.css';
+import { textBlock } from 'lib/notion/renderers';
+import getPageData from 'lib/notion/getPageData';
+import React, { CSSProperties, useEffect } from 'react';
+import getBlogIndex from 'lib/notion/getBlogIndex';
+import getNotionUsers from 'lib/notion/getNotionUsers';
+import { getBlogLink } from 'lib/blog-helpers';
+import { PostedDate } from 'components/postedDate';
+import { Bookmark } from 'components/post/bookmark';
+import Post, { ContentFormat } from 'types/post';
 
 // Get the data for each blog post
 export async function getStaticProps({ params: { slug }, preview }) {
   // load the postsTable so that we can get the page's ID
-  const postsTable = await getBlogIndex()
-  const post = postsTable[slug]
+  const postsTable = await getBlogIndex();
+  const post = postsTable[slug];
 
   // if we can't find the post or if it is unpublished and
   // viewed without preview mode then we just redirect to /
   if (!post || (post.Published !== 'Yes' && !preview)) {
-    console.log(`Failed to find post for slug: ${slug}`)
+    console.log(`Failed to find post for slug: ${slug}`);
     return {
       props: {
         redirect: '/',
         preview: false,
       },
       unstable_revalidate: 5,
-    }
+    };
   }
-  const postData = await getPageData(post.id)
-  post.content = postData.blocks
+  const postData = await getPageData(post.id);
+  post.content = postData.blocks;
 
   for (let i = 0; i < postData.blocks.length; i++) {
-    const { value } = postData.blocks[i]
-    const { type, properties } = value
+    const { value } = postData.blocks[i];
+    const { type, properties } = value;
     if (type == 'tweet') {
-      const src = properties.source[0][0]
+      const src = properties.source[0][0];
       // parse id from https://twitter.com/_ijjk/status/TWEET_ID format
-      const tweetId = src.split('/')[5].split('?')[0]
-      if (!tweetId) continue
+      const tweetId = src.split('/')[5].split('?')[0];
+      if (!tweetId) continue;
 
       try {
         const res = await fetch(
           `https://api.twitter.com/1/statuses/oembed.json?id=${tweetId}`
-        )
-        const json = await res.json()
-        properties.html = json.html.split('<script')[0]
-        post.hasTweet = true
+        );
+        const json = await res.json();
+        properties.html = json.html.split('<script')[0];
+        post.hasTweet = true;
       } catch (_) {
-        console.log(`Failed to get tweet embed for ${src}`)
+        console.log(`Failed to get tweet embed for ${src}`);
       }
     }
   }
 
-  const { users } = await getNotionUsers(post.Authors || [])
-  post.Authors = Object.keys(users).map((id) => users[id].full_name)
+  const { users } = await getNotionUsers(post.Authors || []);
+  post.Authors = Object.keys(users).map((id) => users[id].full_name);
 
   return {
     props: {
@@ -68,12 +68,12 @@ export async function getStaticProps({ params: { slug }, preview }) {
       preview: preview || false,
     },
     revalidate: 10,
-  }
+  };
 }
 
 // Return our list of blog posts to prerender
 export async function getStaticPaths() {
-  const postsTable = await getBlogIndex()
+  const postsTable = await getBlogIndex();
   // we fallback for any unpublished posts to save build time
   // for actually published ones
   return {
@@ -81,56 +81,56 @@ export async function getStaticPaths() {
       .filter((post) => postsTable[post].Published === 'Yes')
       .map((slug) => getBlogLink(slug)),
     fallback: true,
-  }
+  };
 }
 
-const listTypes = new Set(['bulleted_list', 'numbered_list'])
+const listTypes = new Set(['bulleted_list', 'numbered_list']);
 
 type Props = {
-  post: Post
-  redirect: any
-  preview: any
-}
+  post: Post;
+  redirect: any;
+  preview: any;
+};
 
 const RenderPost = ({ post, redirect, preview }: Props) => {
-  const router = useRouter()
+  const router = useRouter();
 
-  let listTagName: string | null = null
-  let listLastId: string | null = null
+  let listTagName: string | null = null;
+  let listLastId: string | null = null;
   let listMap: {
     [id: string]: {
-      key: string
-      isNested?: boolean
-      nested: string[]
-      children: React.ReactFragment
-    }
-  } = {}
+      key: string;
+      isNested?: boolean;
+      nested: string[];
+      children: React.ReactFragment;
+    };
+  } = {};
 
   useEffect(() => {
-    const twitterSrc = 'https://platform.twitter.com/widgets.js'
+    const twitterSrc = 'https://platform.twitter.com/widgets.js';
     // make sure to initialize any new widgets loading on
     // client navigation
     if (post && post.hasTweet) {
       if ((window as any)?.twttr?.widgets) {
-        ;(window as any).twttr.widgets.load()
+        (window as any).twttr.widgets.load();
       } else if (!document.querySelector(`script[src="${twitterSrc}"]`)) {
-        const script = document.createElement('script')
-        script.async = true
-        script.src = twitterSrc
-        document.querySelector('body').appendChild(script)
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = twitterSrc;
+        document.querySelector('body').appendChild(script);
       }
     }
-  }, [])
+  }, []);
   useEffect(() => {
     if (redirect && !post) {
-      router.replace(redirect)
+      router.replace(redirect);
     }
-  }, [redirect, post])
+  }, [redirect, post]);
 
   // If the page is not yet generated, this will be displayed
   // initially until getStaticProps() finishes running
   if (router.isFallback) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   // if you don't have a post at this point, and are not
@@ -142,7 +142,7 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
           Woops! didn't find that post, redirecting you back to the blog index
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -170,25 +170,25 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
         )}
 
         {(post.content || []).map((block, blockIdx) => {
-          const { value } = block
-          const { type, properties, id, parent_id } = value
-          const isLast = blockIdx === post.content.length - 1
-          const isList = listTypes.has(type)
-          let toRender = []
+          const { value } = block;
+          const { type, properties, id, parent_id } = value;
+          const isLast = blockIdx === post.content.length - 1;
+          const isList = listTypes.has(type);
+          let toRender = [];
 
           if (isList) {
-            listTagName = components[type === 'bulleted_list' ? 'ul' : 'ol']
-            listLastId = `list${id}`
+            listTagName = components[type === 'bulleted_list' ? 'ul' : 'ol'];
+            listLastId = `list${id}`;
 
             listMap[id] = {
               key: id,
               nested: [],
               children: textBlock(properties.title, true, id),
-            }
+            };
 
             if (listMap[parent_id]) {
-              listMap[id].isNested = true
-              listMap[parent_id].nested.push(id)
+              listMap[id].isNested = true;
+              listMap[parent_id].nested.push(id);
             }
           }
 
@@ -198,7 +198,7 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                 listTagName,
                 { key: listLastId! },
                 Object.keys(listMap).map((itemId) => {
-                  if (listMap[itemId].isNested) return null
+                  if (listMap[itemId].isNested) return null;
 
                   const createEl = (item) =>
                     React.createElement(
@@ -214,14 +214,14 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                             )
                           )
                         : null
-                    )
-                  return createEl(listMap[itemId])
+                    );
+                  return createEl(listMap[itemId]);
                 })
               )
-            )
-            listMap = {}
-            listLastId = null
-            listTagName = null
+            );
+            listMap = {};
+            listLastId = null;
+            listTagName = null;
           }
 
           const renderHeading = (Type: string | React.ComponentType) => {
@@ -229,8 +229,8 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
               <Heading key={id}>
                 <Type key={id}>{textBlock(properties.title, true, id)}</Type>
               </Heading>
-            )
-          }
+            );
+          };
 
           const renderBookmark = ({
             link,
@@ -238,12 +238,12 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
             description,
             format,
           }: {
-            link: string
-            title: any[]
-            description: string
-            format: ContentFormat
+            link: string;
+            title: any[];
+            description: string;
+            format: ContentFormat;
           }) => {
-            const { bookmark_icon: icon, bookmark_cover: cover } = format
+            const { bookmark_icon: icon, bookmark_cover: cover } = format;
             toRender.push(
               <Bookmark
                 link={link}
@@ -252,30 +252,30 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                 icon={icon}
                 cover={cover}
               />
-            )
-          }
+            );
+          };
 
           switch (type) {
             case 'page':
             case 'divider':
-              break
+              break;
             case 'text':
               if (properties) {
-                toRender.push(textBlock(properties.title, false, id))
+                toRender.push(textBlock(properties.title, false, id));
               }
-              break
+              break;
             case 'image':
             case 'video':
             case 'embed': {
-              const { format = {} as ContentFormat } = value
+              const { format = {} as ContentFormat } = value;
               const {
                 block_width,
                 block_height,
                 display_source,
                 block_aspect_ratio,
-              } = format
-              const baseBlockWidth = 768
-              const roundFactor = Math.pow(10, 2)
+              } = format;
+              const baseBlockWidth = 768;
+              const roundFactor = Math.pow(10, 2);
               // calculate percentages
               const width = block_width
                 ? `${
@@ -283,11 +283,11 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                       (block_width / baseBlockWidth) * 100 * roundFactor
                     ) / roundFactor
                   }%`
-                : block_height || '100%'
+                : block_height || '100%';
 
-              const isImage = type === 'image'
-              const Comp = isImage ? 'img' : 'video'
-              const useWrapper = block_aspect_ratio && !block_height
+              const isImage = type === 'image';
+              const Comp = isImage ? 'img' : 'video';
+              const useWrapper = block_aspect_ratio && !block_height;
               const childStyle: CSSProperties = useWrapper
                 ? {
                     width: '100%',
@@ -302,9 +302,9 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                     height: block_height,
                     display: 'block',
                     maxWidth: '100%',
-                  }
+                  };
 
-              let child = null
+              let child = null;
 
               if (!isImage && !value.file_ids) {
                 // external resource use iframe
@@ -315,7 +315,7 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                     key={!useWrapper ? id : undefined}
                     className={!useWrapper ? 'asset-wrapper' : undefined}
                   />
-                )
+                );
               } else {
                 // notion resource
                 child = (
@@ -331,7 +331,7 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                     autoPlay={!isImage}
                     style={childStyle}
                   />
-                )
+                );
               }
 
               toRender.push(
@@ -349,27 +349,27 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                 ) : (
                   child
                 )
-              )
-              break
+              );
+              break;
             }
             case 'header':
-              renderHeading('h1')
-              break
+              renderHeading('h1');
+              break;
             case 'sub_header':
-              renderHeading('h2')
-              break
+              renderHeading('h2');
+              break;
             case 'sub_sub_header':
-              renderHeading('h3')
-              break
+              renderHeading('h3');
+              break;
             case 'bookmark':
-              const { link, title, description } = properties
-              const { format = {} as ContentFormat } = value
-              renderBookmark({ link, title, description, format })
-              break
+              const { link, title, description } = properties;
+              const { format = {} as ContentFormat } = value;
+              renderBookmark({ link, title, description, format });
+              break;
             case 'code': {
               if (properties.title) {
-                const content = properties.title[0][0]
-                const language = properties.language[0][0]
+                const content = properties.title[0][0];
+                const language = properties.language[0][0];
 
                 if (language === 'LiveScript') {
                   // this requires the DOM for now
@@ -383,16 +383,16 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                       allowUnknownElements={true}
                       blacklistedTags={['script', 'style']}
                     />
-                  )
+                  );
                 } else {
                   toRender.push(
                     <components.Code key={id} language={language || ''}>
                       {content}
                     </components.Code>
-                  )
+                  );
                 }
               }
-              break
+              break;
             }
             case 'quote': {
               if (properties.title) {
@@ -402,9 +402,9 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                     { key: id },
                     properties.title
                   )
-                )
+                );
               }
-              break
+              break;
             }
             case 'callout': {
               toRender.push(
@@ -416,8 +416,8 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                     {textBlock(properties.title, true, id)}
                   </div>
                 </div>
-              )
-              break
+              );
+              break;
             }
             case 'tweet': {
               if (properties.html) {
@@ -426,35 +426,35 @@ const RenderPost = ({ post, redirect, preview }: Props) => {
                     dangerouslySetInnerHTML={{ __html: properties.html }}
                     key={id}
                   />
-                )
+                );
               }
-              break
+              break;
             }
             case 'equation': {
               if (properties && properties.title) {
-                const content = properties.title[0][0]
+                const content = properties.title[0][0];
                 toRender.push(
                   <components.Equation key={id} displayMode={true}>
                     {content}
                   </components.Equation>
-                )
+                );
               }
-              break
+              break;
             }
             default:
               if (
                 process.env.NODE_ENV !== 'production' &&
                 !listTypes.has(type)
               ) {
-                console.log('unknown type', type)
+                console.log('unknown type', type);
               }
-              break
+              break;
           }
-          return toRender
+          return toRender;
         })}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default RenderPost
+export default RenderPost;

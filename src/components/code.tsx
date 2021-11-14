@@ -1,5 +1,5 @@
-import Prism from 'prismjs'
-import 'prismjs/components/prism-jsx'
+import Prism from 'prismjs';
+import 'prismjs/components/prism-jsx';
 
 const Code = ({ children, language = 'javascript' }) => {
   return (
@@ -32,7 +32,7 @@ const Code = ({ children, language = 'javascript' }) => {
         }
       `}</style>
     </>
-  )
-}
+  );
+};
 
-export default Code
+export default Code;

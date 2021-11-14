@@ -1,12 +1,12 @@
-import blogStyles from '../../styles/blog.module.css'
+import blogStyles from '../../styles/blog.module.css';
 
 type Props = {
-  link: string
-  title: any[]
-  description: string
-  icon: string
-  cover: string
-}
+  link: string;
+  title: any[];
+  description: string;
+  icon: string;
+  cover: string;
+};
 
 export function Bookmark({ link, title, description, icon, cover }: Props) {
   return (
@@ -42,5 +42,5 @@ export function Bookmark({ link, title, description, icon, cover }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }

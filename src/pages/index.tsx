@@ -1,39 +1,39 @@
-import Link from 'next/link'
-import Header from 'components/header'
+import Link from 'next/link';
+import Header from 'components/header';
 
-import blogStyles from 'styles/blog.module.css'
-import sharedStyles from 'styles/shared.module.css'
+import blogStyles from 'styles/blog.module.css';
+import sharedStyles from 'styles/shared.module.css';
 
-import { getBlogLink, postIsPublished } from 'lib/blog-helpers'
-import { textBlock } from 'lib/notion/renderers'
-import getNotionUsers from 'lib/notion/getNotionUsers'
-import getBlogIndex from 'lib/notion/getBlogIndex'
-import { PostedDate } from 'components/postedDate'
+import { getBlogLink, postIsPublished } from 'lib/blog-helpers';
+import { textBlock } from 'lib/notion/renderers';
+import getNotionUsers from 'lib/notion/getNotionUsers';
+import getBlogIndex from 'lib/notion/getBlogIndex';
+import { PostedDate } from 'components/postedDate';
 
 export async function getStaticProps({ preview }) {
-  const postsTable = await getBlogIndex()
+  const postsTable = await getBlogIndex();
 
-  const authorsToGet: Set<string> = new Set()
+  const authorsToGet: Set<string> = new Set();
   const posts: any[] = Object.keys(postsTable)
     .map((slug) => {
-      const post = postsTable[slug]
+      const post = postsTable[slug];
       // remove draft posts in production
       if (!preview && !postIsPublished(post)) {
-        return null
+        return null;
       }
-      post.Authors = post.Authors || []
+      post.Authors = post.Authors || [];
       for (const author of post.Authors) {
-        authorsToGet.add(author)
+        authorsToGet.add(author);
       }
-      return post
+      return post;
     })
-    .filter(Boolean)
+    .filter(Boolean);
 
-  const { users } = await getNotionUsers([...authorsToGet])
+  const { users } = await getNotionUsers([...authorsToGet]);
 
   posts.map((post) => {
-    post.Authors = post.Authors.map((id) => users[id].full_name)
-  })
+    post.Authors = post.Authors.map((id) => users[id].full_name);
+  });
 
   return {
     props: {
@@ -41,7 +41,7 @@ export async function getStaticProps({ preview }) {
       posts,
     },
     revalidate: 10,
-  }
+  };
 }
 
 const Index = ({ posts = [], preview }) => {
@@ -86,11 +86,11 @@ const Index = ({ posts = [], preview }) => {
                 )}
               </p>
             </div>
-          )
+          );
         })}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;
