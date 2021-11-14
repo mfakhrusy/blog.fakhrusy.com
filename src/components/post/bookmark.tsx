@@ -1,4 +1,4 @@
-import blogStyles from '../styles/blog.module.css'
+import blogStyles from '../../styles/blog.module.css'
 
 type Props = {
   link: string
