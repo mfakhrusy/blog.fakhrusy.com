@@ -1,4 +1,4 @@
-import { getDateStr } from '../lib/blog-helpers'
+import { getDateStr } from 'lib/blog-helpers'
 
 type Props = {
   date: Date | undefined
