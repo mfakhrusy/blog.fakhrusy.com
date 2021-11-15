@@ -126,17 +126,45 @@ export function PostBody({ post }: Props) {
         };
 
         switch (type) {
-          case 'page':
-          case 'divider':
-            break;
           case 'text':
             if (properties) {
               toRender.push(textBlock(properties.title, false, id));
             }
             break;
-          case 'image':
-          case 'video':
           case 'embed': {
+            const { format = {} as ContentFormat } = value;
+            // may be buggy, see block_aspect_ration in format object to debug
+            // (since I removed the check on embed type), look up the image/video type
+            const { block_width, block_height, display_source } = format;
+            const baseBlockWidth = 768;
+            const roundFactor = Math.pow(10, 2);
+            const width = `${
+              Math.round((block_width / baseBlockWidth) * 100 * roundFactor) /
+              roundFactor
+            }%`;
+
+            const childStyle: CSSProperties = {
+              width,
+              border: 'none',
+              height: block_height,
+              display: 'block',
+              maxWidth: '100%',
+            };
+
+            let child = (
+              <iframe
+                style={childStyle}
+                src={display_source}
+                key={id}
+                className="asset-wrapper"
+              />
+            );
+
+            toRender.push(child);
+            break;
+          }
+          case 'image':
+          case 'video': {
             const { format = {} as ContentFormat } = value;
             const {
               block_width,
@@ -144,6 +172,7 @@ export function PostBody({ post }: Props) {
               display_source,
               block_aspect_ratio,
             } = format;
+            const isImage = type === 'image';
             const baseBlockWidth = 768;
             const roundFactor = Math.pow(10, 2);
             // calculate percentages
@@ -155,8 +184,10 @@ export function PostBody({ post }: Props) {
                 }%`
               : block_height || '100%';
 
-            const isImage = type === 'image';
-            const Comp = isImage ? 'img' : 'video';
+            if (block_height === 747) {
+              console.log(format);
+            }
+
             const useWrapper = block_aspect_ratio && !block_height;
             const childStyle: CSSProperties = useWrapper
               ? {
@@ -169,40 +200,37 @@ export function PostBody({ post }: Props) {
               : {
                   width,
                   border: 'none',
-                  height: block_height,
+                  // haven't checked for video
+                  // if video UI is weird, check below line
+                  height: isImage ? undefined : block_height,
                   display: 'block',
                   maxWidth: '100%',
                 };
 
-            let child = null;
+            let src = `/api/asset?assetUrl=${encodeURIComponent(
+              display_source
+            )}&blockId=${id}`;
 
-            if (!isImage && !value.file_ids) {
-              // external resource use iframe
-              child = (
-                <iframe
-                  style={childStyle}
-                  src={display_source}
-                  key={!useWrapper ? id : undefined}
-                  className={!useWrapper ? 'asset-wrapper' : undefined}
-                />
-              );
-            } else {
-              // notion resource
-              child = (
-                <Comp
-                  key={!useWrapper ? id : undefined}
-                  src={`/api/asset?assetUrl=${encodeURIComponent(
-                    display_source
-                  )}&blockId=${id}`}
-                  controls={!isImage}
-                  alt={`A${isImage ? 'n image' : ' video'} from Notion`}
-                  loop={!isImage}
-                  muted={!isImage}
-                  autoPlay={!isImage}
-                  style={childStyle}
-                />
-              );
-            }
+            let imgAlt = properties.caption?.[0] ?? 'An image from notion';
+
+            let child = isImage ? (
+              <img
+                key={useWrapper ? undefined : id}
+                src={src}
+                alt={imgAlt}
+                style={childStyle}
+              />
+            ) : (
+              <video
+                key={useWrapper ? undefined : id}
+                src={src}
+                controls
+                loop
+                muted
+                autoPlay
+                style={childStyle}
+              />
+            );
 
             toRender.push(
               useWrapper ? (
@@ -311,6 +339,8 @@ export function PostBody({ post }: Props) {
             }
             break;
           }
+          case 'page':
+          case 'divider':
           case 'bulleted_list':
           case 'numbered_list':
             // do nothing

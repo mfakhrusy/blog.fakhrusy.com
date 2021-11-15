@@ -1,9 +1,11 @@
 type Properties = {
-  title: any[];
-  description: string;
-  link: string;
-  language: any[];
-  html: string;
+  title: Array<any>;
+  description?: string;
+  link?: string;
+  language?: Array<any>;
+  html?: string;
+  size?: Array<string>;
+  caption?: Array<string>;
 };
 
 export type ContentFormat = {
