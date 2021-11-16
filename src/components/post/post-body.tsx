@@ -7,6 +7,7 @@ import blogStyles from 'styles/blog.module.css';
 import { textBlock } from 'lib/notion/renderers';
 import Post, { ContentFormat } from 'types/post';
 import { Bookmark } from './bookmark';
+import { ClickableImage } from './clickable-image';
 
 const listTypes = new Set(['bulleted_list', 'numbered_list']);
 
@@ -184,10 +185,6 @@ export function PostBody({ post }: Props) {
                 }%`
               : block_height || '100%';
 
-            if (block_height === 747) {
-              console.log(format);
-            }
-
             const useWrapper = block_aspect_ratio && !block_height;
             const childStyle: CSSProperties = useWrapper
               ? {
@@ -214,7 +211,7 @@ export function PostBody({ post }: Props) {
             let imgAlt = properties.caption?.[0] ?? 'An image from notion';
 
             let child = isImage ? (
-              <img
+              <ClickableImage
                 key={useWrapper ? undefined : id}
                 src={src}
                 alt={imgAlt}
