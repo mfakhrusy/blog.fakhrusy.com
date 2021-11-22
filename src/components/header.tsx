@@ -37,7 +37,11 @@ const Header = ({ titlePrefix, imagePreview }: Props) => {
         <meta property="og:image" content={ogImage} />
         <meta name="twitter:site" content="@f_fakhrusy" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={ogImage} />
+        <meta name="twitter:image" content={newOgImageURL} />
+        <meta
+          name="twitter:description"
+          content={titlePrefix ?? "Fahru's Brain Dumps"}
+        />
       </Head>
       <ul>
         {navItems.map(({ label, page, link }) => (
