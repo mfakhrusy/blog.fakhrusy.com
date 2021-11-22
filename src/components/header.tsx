@@ -8,7 +8,7 @@ const navItems: { label: string; page?: string; link?: string }[] = [
   { label: 'Home', page: '/' },
 ];
 
-const ogImageUrl = 'https://notion-blog.now.sh/og-image.png';
+const ogImageUrl = 'https://blog.fakhrusy.com/neuron.png';
 
 const Header = ({ titlePre = '' }) => {
   const { pathname } = useRouter();
@@ -19,10 +19,10 @@ const Header = ({ titlePre = '' }) => {
         <title>{titlePre ? `${titlePre} |` : ''} Fahru's Brain Dumps</title>
         <meta
           name="description"
-          content="An example Next.js site using Notion for the blog"
+          content="My brain dumps about anything that I found share-worthy"
         />
         <meta name="og:title" content="Brain dumps" />
-        {/* <meta property="og:image" content={ogImageUrl} /> */}
+        <meta property="og:image" content={ogImageUrl} />
         <meta name="twitter:site" content="@f_fakhrusy" />
         <meta name="twitter:card" content="summary_large_image" />
         {/* <meta name="twitter:image" content={ogImageUrl} /> */}
