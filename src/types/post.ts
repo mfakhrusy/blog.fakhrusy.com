@@ -57,6 +57,7 @@ type Post = {
   hasTweet: boolean;
   Slug: string;
   content: Array<Content>;
+  image?: string;
 };
 
 export default Post;

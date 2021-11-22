@@ -47,7 +47,7 @@ export async function getStaticProps({ preview }) {
 const Index = ({ posts = [], preview }) => {
   return (
     <>
-      <Header titlePre="Blog" />
+      <Header titlePrefix="Blog" />
       {preview && (
         <div className={blogStyles.previewAlertContainer}>
           <div className={blogStyles.previewAlert}>
