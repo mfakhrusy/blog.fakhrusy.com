@@ -21,6 +21,7 @@ const Header = ({ titlePrefix, imagePreview }: Props) => {
   let title = `${titlePrefix ? `${titlePrefix} |` : ''} Fahru's Brain Dumps`;
 
   let ogImage = imagePreview ? `/post-preview/${imagePreview}` : newOgImageURL;
+  let ogPreviewImageURL = `https://blog.fakhrusy.com/post-preview/${imagePreview}`;
 
   return (
     <header className={styles.header}>
@@ -37,7 +38,10 @@ const Header = ({ titlePrefix, imagePreview }: Props) => {
         <meta property="og:image" content={ogImage} />
         <meta name="twitter:site" content="@f_fakhrusy" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={ogImage} />
+        <meta
+          name="twitter:image"
+          content={imagePreview ? ogPreviewImageURL : newOgImageURL}
+        />
         <meta
           name="twitter:description"
           content={titlePrefix ?? "Fahru's Brain Dumps"}
