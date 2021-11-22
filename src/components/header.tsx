@@ -25,7 +25,7 @@ const Header = ({ titlePre = '' }) => {
         <meta property="og:image" content={ogImageUrl} />
         <meta name="twitter:site" content="@f_fakhrusy" />
         <meta name="twitter:card" content="summary_large_image" />
-        {/* <meta name="twitter:image" content={ogImageUrl} /> */}
+        <meta name="twitter:image" content={ogImageUrl} />
       </Head>
       <ul>
         {navItems.map(({ label, page, link }) => (
