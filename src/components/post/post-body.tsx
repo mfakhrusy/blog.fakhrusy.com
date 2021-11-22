@@ -164,7 +164,44 @@ export function PostBody({ post }: Props) {
             toRender.push(child);
             break;
           }
-          case 'image':
+          case 'image': {
+            const { format = {} as ContentFormat } = value;
+            const { block_width, block_height, display_source } = format;
+            const baseBlockWidth = 768;
+            const roundFactor = Math.pow(10, 2);
+            // calculate percentages
+            const width = block_width
+              ? `${
+                  Math.round(
+                    (block_width / baseBlockWidth) * 100 * roundFactor
+                  ) / roundFactor
+                }%`
+              : block_height || '100%';
+
+            const childStyle: CSSProperties = {
+              width,
+              border: 'none',
+              height: undefined,
+              display: 'block',
+              maxWidth: '100%',
+            };
+
+            let src = `/api/asset?assetUrl=${encodeURIComponent(
+              display_source
+            )}&blockId=${id}`;
+
+            let imgAlt = properties.caption?.[0] ?? 'An image from notion';
+
+            toRender.push(
+              <ClickableImage
+                key={id}
+                src={src}
+                alt={imgAlt}
+                style={childStyle}
+              />
+            );
+            break;
+          }
           case 'video': {
             const { format = {} as ContentFormat } = value;
             const {
@@ -173,7 +210,6 @@ export function PostBody({ post }: Props) {
               display_source,
               block_aspect_ratio,
             } = format;
-            const isImage = type === 'image';
             const baseBlockWidth = 768;
             const roundFactor = Math.pow(10, 2);
             // calculate percentages
@@ -197,9 +233,7 @@ export function PostBody({ post }: Props) {
               : {
                   width,
                   border: 'none',
-                  // haven't checked for video
-                  // if video UI is weird, check below line
-                  height: isImage ? undefined : block_height,
+                  height: block_height,
                   display: 'block',
                   maxWidth: '100%',
                 };
@@ -208,16 +242,7 @@ export function PostBody({ post }: Props) {
               display_source
             )}&blockId=${id}`;
 
-            let imgAlt = properties.caption?.[0] ?? 'An image from notion';
-
-            let child = isImage ? (
-              <ClickableImage
-                key={useWrapper ? undefined : id}
-                src={src}
-                alt={imgAlt}
-                style={childStyle}
-              />
-            ) : (
+            let child = (
               <video
                 key={useWrapper ? undefined : id}
                 src={src}
