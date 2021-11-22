@@ -8,7 +8,7 @@ const navItems: { label: string; page?: string; link?: string }[] = [
   { label: 'Home', page: '/' },
 ];
 
-const ogImageUrl = 'https://blog.fakhrusy.com/neuron.png';
+const ogImageUrl = 'https://blog.fakhrusy.com/neuron.jpg';
 
 const Header = ({ titlePre = '' }) => {
   const { pathname } = useRouter();
