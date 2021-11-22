@@ -8,7 +8,7 @@ const navItems: { label: string; page?: string; link?: string }[] = [
   { label: 'Home', page: '/' },
 ];
 
-const ogImageUrl = 'https://blog.fakhrusy.com/neuron.jpg';
+const newOgImageURL = 'https://blog.fakhrusy.com/neuron.jpg';
 
 const Header = ({ titlePre = '' }) => {
   const { pathname } = useRouter();
@@ -21,11 +21,11 @@ const Header = ({ titlePre = '' }) => {
           name="description"
           content="My brain dumps about anything that I found share-worthy"
         />
-        <meta name="og:title" content="Brain dumps" />
-        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:title" content="Brain dumps" />
+        <meta property="og:image" content={newOgImageURL} />
         <meta name="twitter:site" content="@f_fakhrusy" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image" content={newOgImageURL} />
       </Head>
       <ul>
         {navItems.map(({ label, page, link }) => (
