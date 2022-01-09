@@ -18,8 +18,10 @@ export async function getStaticProps({ preview }) {
     .map((slug) => {
       const post = postsTable[slug];
       // remove draft posts in production
-      if (!preview && !postIsPublished(post)) {
-        return null;
+      if (process.env.NODE_ENV === 'production') {
+        if (!preview && !postIsPublished(post)) {
+          return null;
+        }
       }
       post.Authors = post.Authors || [];
       for (const author of post.Authors) {
@@ -45,6 +47,7 @@ export async function getStaticProps({ preview }) {
 }
 
 const Index = ({ posts = [], preview }) => {
+  console.log(process.env.NODE_ENV);
   return (
     <>
       <Header titlePrefix="Blog" />
@@ -69,7 +72,7 @@ const Index = ({ posts = [], preview }) => {
             <div className={blogStyles.postPreview} key={post.Slug}>
               <h3>
                 <span className={blogStyles.titleContainer}>
-                  {!post.Published && (
+                  {!postIsPublished(post) && (
                     <span className={blogStyles.draftBadge}>Draft</span>
                   )}
                   <Link href="/[slug]" as={getBlogLink(post.Slug)}>

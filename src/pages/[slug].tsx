@@ -86,18 +86,33 @@ export async function getStaticProps({ params: { slug }, preview }) {
   // load the postsTable so that we can get the page's ID
   const postsTable = await getBlogIndex();
   const post = postsTable[slug];
+  const postIsNotAvailable = !post;
+  const unpublishedPost = post.Published !== 'Yes';
+  const isNotInPreview = !preview;
 
   // if we can't find the post or if it is unpublished and
   // viewed without preview mode then we just redirect to /
-  if (!post || (post.Published !== 'Yes' && !preview)) {
+  if (postIsNotAvailable) {
     console.log(`Failed to find post for slug: ${slug}`);
     return {
       props: {
         redirect: '/',
         preview: false,
       },
-      unstable_revalidate: 5,
+      revalidate: 5,
     };
+  }
+  if (process.env.NODE_ENV === 'production') {
+    if (unpublishedPost && isNotInPreview) {
+      console.log(`Failed to find post for slug: ${slug}`);
+      return {
+        props: {
+          redirect: '/',
+          preview: false,
+        },
+        revalidate: 5,
+      };
+    }
   }
   const postData = await getPageData(post.id);
   post.content = postData.blocks;
