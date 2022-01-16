@@ -6,6 +6,9 @@ import styles from 'styles/header.module.css';
 
 const navItems: { label: string; page?: string; link?: string }[] = [
   { label: 'Home', page: '/' },
+  { label: 'Personal Site', link: 'https://fakhrusy.com' },
+  { label: 'Twitter', link: 'https://twitter.com/f_fakhrusy' },
+  { label: 'GitHub', link: 'https://github.com/mfakhrusy' },
 ];
 
 const newOgImageURL = 'https://blog.fakhrusy.com/neuron.jpg';
