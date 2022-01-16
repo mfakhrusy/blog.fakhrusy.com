@@ -58,6 +58,7 @@ type Post = {
   Slug: string;
   content: Array<Content>;
   image?: string;
+  Authors: any;
 };
 
 export default Post;

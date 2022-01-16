@@ -9,12 +9,13 @@ import { textBlock } from 'lib/notion/renderers';
 import getNotionUsers from 'lib/notion/getNotionUsers';
 import getBlogIndex from 'lib/notion/getBlogIndex';
 import { PostedDate } from 'components/postedDate';
+import Post from 'types/post';
 
 export async function getStaticProps({ preview }) {
   const postsTable = await getBlogIndex();
 
   const authorsToGet: Set<string> = new Set();
-  const posts: any[] = Object.keys(postsTable)
+  const posts: Post[] = Object.keys(postsTable)
     .map((slug) => {
       const post = postsTable[slug];
       // remove draft posts in production
@@ -37,6 +38,10 @@ export async function getStaticProps({ preview }) {
     post.Authors = post.Authors.map((id) => users[id].full_name);
   });
 
+  posts.sort((a, b) => {
+    return new Date(b.Date).getTime() - new Date(a.Date).getTime();
+  });
+
   return {
     props: {
       preview: preview || false,
@@ -47,7 +52,6 @@ export async function getStaticProps({ preview }) {
 }
 
 const Index = ({ posts = [], preview }) => {
-  console.log(process.env.NODE_ENV);
   return (
     <>
       <Header titlePrefix="Blog" />
@@ -67,7 +71,7 @@ const Index = ({ posts = [], preview }) => {
         {posts.length === 0 && (
           <p className={blogStyles.noPosts}>There are no posts yet</p>
         )}
-        {posts.reverse().map((post) => {
+        {posts.map((post) => {
           return (
             <div className={blogStyles.postPreview} key={post.Slug}>
               <h3>
