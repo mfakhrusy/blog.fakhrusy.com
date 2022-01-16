@@ -33,11 +33,9 @@ export async function getStaticProps({ preview }) {
 
   const { users } = await getNotionUsers([...authorsToGet]);
 
-  posts
-    .map((post) => {
-      post.Authors = post.Authors.map((id) => users[id].full_name);
-    })
-    .reverse();
+  posts.map((post) => {
+    post.Authors = post.Authors.map((id) => users[id].full_name);
+  });
 
   return {
     props: {
@@ -69,7 +67,7 @@ const Index = ({ posts = [], preview }) => {
         {posts.length === 0 && (
           <p className={blogStyles.noPosts}>There are no posts yet</p>
         )}
-        {posts.map((post) => {
+        {posts.reverse().map((post) => {
           return (
             <div className={blogStyles.postPreview} key={post.Slug}>
               <h3>
