@@ -4,6 +4,21 @@
     <subtitle>Blog</subtitle>
     <link href="/atom" rel="self" type="application/rss+xml"/>
     <link href="/" />
-    <updated>2021-10-29T18:36:49.186Z</updated>
+    <updated>2022-01-10T00:19:37.417Z</updated>
     <id>Fahru's Brain Dumps</id>
+    <entry>
+      <id>/deploy-actix-rust-backend-github-action-vps</id>
+      <title>Deploy Rust Backend Application Automatically using Github Action to a Remote Server</title>
+      <link href="/deploy-actix-rust-backend-github-action-vps"/>
+      <updated>2021-11-21T05:00:00.653Z</updated>
+      <content type="xhtml">
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>We will build an automatic deployment system for a rust backend application. We will use GitHub Action and rsync to upload our rust binary to a remote server. Then we will utilize NGINX, systemd, DNS, and Let&#x27;s Encrypt to publish our application to the internet. We will not be using docker in this article.</p>
+          <p class="more">
+            <a href="/deploy-actix-rust-backend-github-action-vps">Read more</a>
+          </p>
+        </div>
+      </content>
+      
+    </entry>
   </feed>
