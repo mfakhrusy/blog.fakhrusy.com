@@ -10,6 +10,8 @@ import getNotionUsers from 'lib/notion/getNotionUsers';
 import getBlogIndex from 'lib/notion/getBlogIndex';
 import { PostedDate } from 'components/postedDate';
 import Post from 'types/post';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export async function getStaticProps({ preview }) {
   const postsTable = await getBlogIndex();
@@ -51,7 +53,19 @@ export async function getStaticProps({ preview }) {
   };
 }
 
+type Query = {
+  iframe: 'true' | undefined;
+};
+
 const Index = ({ posts = [], preview }) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.iframe === 'true') {
+      sessionStorage.setItem('iframe', 'true');
+    }
+  }, [(router.query as Query).iframe]);
+
   return (
     <>
       <Header titlePrefix="Blog" />
@@ -69,7 +83,10 @@ const Index = ({ posts = [], preview }) => {
       <div className={`${sharedStyles.layout} ${blogStyles.blogIndex}`}>
         <h1>Fahru's Brain Dumps</h1>
         {posts.length === 0 && (
-          <p className={blogStyles.noPosts}>There are no posts yet</p>
+          <p className={blogStyles.noPosts}>
+            There seems to be a problem with the Notion API :( Please keep
+            refreshing the page
+          </p>
         )}
         {posts.map((post) => {
           return (
