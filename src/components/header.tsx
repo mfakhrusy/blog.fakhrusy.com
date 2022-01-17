@@ -21,10 +21,15 @@ type Props = {
 const Header = ({ titlePrefix, imagePreview }: Props) => {
   const { pathname } = useRouter();
 
-  let title = `${titlePrefix ? `${titlePrefix} |` : ''} Fahru's Brain Dumps`;
+  const title = `${titlePrefix ? `${titlePrefix} |` : ''} Fahru's Brain Dumps`;
 
-  let ogImage = imagePreview ? `/post-preview/${imagePreview}` : newOgImageURL;
-  let ogPreviewImageURL = `https://blog.fakhrusy.com/post-preview/${imagePreview}`;
+  const ogImage = imagePreview
+    ? `/post-preview/${imagePreview}`
+    : newOgImageURL;
+  const ogPreviewImageURL = `https://blog.fakhrusy.com/post-preview/${imagePreview}`;
+  const isIframe = typeof window !== 'undefined' && window.self !== window.top;
+
+  console.log(isIframe);
 
   return (
     <header className={styles.header}>
@@ -51,19 +56,31 @@ const Header = ({ titlePrefix, imagePreview }: Props) => {
         />
       </Head>
       <ul>
-        {navItems.map(({ label, page, link }) => (
-          <li key={label}>
-            {page ? (
-              <Link href={page}>
-                <a className={pathname === page ? 'active' : undefined}>
-                  {label}
-                </a>
-              </Link>
-            ) : (
-              <ExtLink href={link}>{label}</ExtLink>
-            )}
-          </li>
-        ))}
+        {navItems
+          .filter((item) => {
+            if (isIframe) {
+              if (item.page) {
+                return true;
+              } else {
+                return false;
+              }
+            } else {
+              return true;
+            }
+          })
+          .map(({ label, page, link }) => (
+            <li key={label}>
+              {page ? (
+                <Link href={page}>
+                  <a className={pathname === page ? 'active' : undefined}>
+                    {label}
+                  </a>
+                </Link>
+              ) : (
+                <ExtLink href={link}>{label}</ExtLink>
+              )}
+            </li>
+          ))}
       </ul>
     </header>
   );
