@@ -53,19 +53,7 @@ export async function getStaticProps({ preview }) {
   };
 }
 
-type Query = {
-  iframe: 'true' | undefined;
-};
-
 const Index = ({ posts = [], preview }) => {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (router.query.iframe === 'true') {
-      sessionStorage.setItem('iframe', 'true');
-    }
-  }, [(router.query as Query).iframe]);
-
   return (
     <>
       <Header titlePrefix="Blog" />
