@@ -29,8 +29,6 @@ const Header = ({ titlePrefix, imagePreview }: Props) => {
   const ogPreviewImageURL = `https://blog.fakhrusy.com/post-preview/${imagePreview}`;
   const isIframe = typeof window !== 'undefined' && window.self !== window.top;
 
-  console.log(isIframe);
-
   return (
     <header className={styles.header}>
       <Head>
