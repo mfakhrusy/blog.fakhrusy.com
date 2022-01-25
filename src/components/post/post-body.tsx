@@ -210,7 +210,7 @@ export function PostBody({ post }: Props) {
               display_source,
               block_aspect_ratio,
             } = format;
-            const baseBlockWidth = 768;
+            const baseBlockWidth = 256;
             const roundFactor = Math.pow(10, 2);
             // calculate percentages
             const width = block_width
